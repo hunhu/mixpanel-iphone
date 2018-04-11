@@ -406,7 +406,11 @@ static NSString *defaultProjectToken;
         [self archiveProperties];
     });
 #if MIXPANEL_FLUSH_IMMEDIATELY
-    [self flush];
+    // Background flushing on the watch will be handled by a flushWithCompletion
+    // call preceding setting the background task completed
+    if ([[WKExtension sharedExtension] applicationState] != WKApplicationStateBackground) {
+        [self flush];
+    }
 #else
     if ([Mixpanel isAppExtension]) {
         [self flush];
